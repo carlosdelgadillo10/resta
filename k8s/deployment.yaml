@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resta-deployment
+  namespace: resta
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: resta
+  template:
+    metadata:
+      labels:
+        app: resta
+    spec:
+      containers:
+      - name: resta
+        image: carlosdelgadillo/resta:latest
+        ports:
+        - containerPort: 8004

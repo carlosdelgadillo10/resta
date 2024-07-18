@@ -1,80 +1,30 @@
 pipeline {
     agent any
-    
     environment {
-        GITHUB_CREDENTIALS = credentials('github-token') // ID configurado en Jenkins para el token de GitHub
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credential') // ID configurado en Jenkins para DockerHub
-        DOCKER_IMAGE = "carlosdelgadillo/web" // Reemplaza "tu_usuario/tu_microservicio" con tu nombre de usuario e imagen
+        KUBECONFIG_CREDENTIALS = credentials('k8s-jenkins-token') // ID de las credenciales que creaste en Jenkins
     }
-
     stages {
-        stage('Checkout') {
+        stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    git url: 'https://github.com/carlosdelgadillo10/web.git', credentialsId: 'github-token'
-                }
-            }
-        }
-        
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                script {
-                    dockerImage.inside {
-                        // Agrega aquí los comandos necesarios para realizar pruebas.
-                        sh 'npm test' // Ejemplo para Node.js; ajusta según tu stack tecnológico.
-                    }
-                }
-            }
-        }
-        
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credential') {
-                        dockerImage.push("${env.BUILD_ID}")
-                        dockerImage.push('latest')
-                    }
-                }
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                script {
-                    // Detener y eliminar contenedores existentes que usan la misma imagen
-                    sh '''
-                    if [ "$(docker ps -q -f name=web)" ]; then
-                        docker stop web
-                        docker rm web
-                    fi
-                    '''
+                withCredentials([string(credentialsId: 'k8s-jenkins-token', variable: 'TOKEN')]) {
+                    script {
+                        // Configurar el contexto de Kubernetes con el token
+                        sh '''
+                        kubectl config set-credentials jenkins --token=$TOKEN
+                        kubectl config set-context jenkins-context --cluster=minikube --user=jenkins --namespace=resta
+                        kubectl config use-context jenkins-context
+                        '''
 
-                    // Ejecutar el nuevo contenedor con la nueva imagen
-                    sh """
-                    docker run -d --name web -p 5000:5000 ${DOCKER_IMAGE}:${env.BUILD_ID}
-                    """
+                        // Aplicar los archivos YAML desde la carpeta k8s
+                        sh '''
+                        kubectl apply -f k8s/namespace.yaml
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                        kubectl apply -f k8s/ingress.yaml
+                        '''
+                    }
                 }
             }
-        }
-    }
-    
-    post {
-        always {
-            cleanWs() // Limpia el espacio de trabajo después de cada ejecución.
-        }
-        success {
-            echo 'Build y despliegue exitoso.'
-        }
-        failure {
-            echo 'Build o despliegue fallido.'
         }
     }
 }
