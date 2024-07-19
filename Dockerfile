@@ -8,7 +8,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Definir una variable de entorno para configurar el puerto
-ARG PUERTO=8004
+ENV PUERTO=8004
 #Esta es la configuración por defecto que se usará si el usuario no especifica otra mediante una variable de entorno al ejecutar el contenedor.
 
 # Exponer el puerto especificado por la variable de entorno PUERTO
