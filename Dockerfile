@@ -1,11 +1,11 @@
 # resta/Dockerfile
-FROM python:3.11-slim
+FROM node:18-slim
 
 WORKDIR /app
 
-COPY . /app
+COPY app/ ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN npm install express
 
 # Definir una variable de entorno para configurar el puerto
 ENV PUERTO=8004
@@ -15,5 +15,5 @@ ENV PUERTO=8004
 EXPOSE $PUERTO
 
 # Comando por defecto para ejecutar la aplicación usando Uvicorn, usando la variable de entorno para el puerto
-CMD ["uvicorn", "app.resta:app", "--host", "0.0.0.0", "--port", "8004"]
+CMD ["node", "resta.js"]
 #escuchar en 0.0.0.0, significa que está dispuesto a recibir conexiones desde cualquier dirección IP disponible en la máquina host
