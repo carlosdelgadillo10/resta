@@ -17,8 +17,8 @@ pipeline {
                 sh 'kubectl apply -f ./k8s/namespace.yaml'
                 sh 'kubectl apply -f ./k8s/deployment.yaml'
                 sh 'kubectl apply -f ./k8s/service.yaml'
-                sh 'kubectl apply -f ./k8s/ingress.yaml' 
-                sh 'kubectl -n resta expose deployment  resta-deployment --type=NodePort --port=8004'
+                sh 'kubectl apply -f ./k8s/ingress.yaml'
+                //sh 'kubectl -n resta expose deployment  resta-deployment --type=NodePort --port=8004'
                 }
             }
         }
