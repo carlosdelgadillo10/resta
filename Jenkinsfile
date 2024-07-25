@@ -8,12 +8,15 @@ pipeline {
     }
 
     stages {
-
         stage('Deploy to Minikube') {
             steps {
                 script {
                     // Configurar kubectl con el archivo de configuración
                     sh 'export KUBECONFIG=${KUBECTL_CONFIG}'
+
+                    // Verificar el contexto de kubectl
+                    sh 'kubectl config use-context minikube'
+                    sh 'kubectl config current-context'
 
                     // Aplicar el archivo de namespace (si es necesario)
                     sh 'kubectl apply -f /home/carlosd/Desktop/p_python/microservices/resta/k8s/namespace.yaml'
