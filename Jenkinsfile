@@ -13,10 +13,10 @@ pipeline {
             steps {
                 script {
                     // Configurar kubectl
-                    sh 'kubectl config use-context minikube'
+                    //sh 'kubectl config use-context minikube'
                     
                     // Aplicar el archivo de namespace
-                    sh 'kubectl apply -f ../resta/k8s/namespace.yaml'
+                    //sh 'kubectl apply -f ../resta/k8s/namespace.yaml'
                     
                     // Aplicar los archivos de Kubernetes
                     sh 'kubectl apply -f ./resta/k8s/deployment.yaml'
