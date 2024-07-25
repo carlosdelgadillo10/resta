@@ -7,6 +7,8 @@ pipeline {
         KUBECTL_CONFIG = '/home/carlosd/.kube/config' // Ajusta según tu configuración
     }
 
+    stages {
+
         stage('Deploy to Minikube') {
             steps {
                 script {
