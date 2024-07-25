@@ -12,10 +12,13 @@ pipeline {
         stage('Apply Kubernetes Files') {
             steps {
                 withKubeConfig([credentialsId: 'mykubeconfig']) {
-                //sh 'cat deployment.yaml | sed "s/{{BUILD_NUMBER}}/$BUILD_NUMBER/g" | kubectl apply -f -'
+                // Nota para alkcanzar el archivo le decimos que a la altura.
+                //Instalar plugin kubernetes CLI
+                sh 'kubectl apply -f ./k8s/namespace.yaml'
                 sh 'kubectl apply -f ./k8s/deployment.yaml'
                 sh 'kubectl apply -f ./k8s/service.yaml'
-                sh 'kubectl apply -f ./k8s/ingress.yaml'
+                sh 'kubectl apply -f ./k8s/ingress.yaml' 
+                sh 'kubectl -n resta expose deployment  resta-deployment --type=NodePort --port=8004'
                 }
             }
         }

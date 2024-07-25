@@ -4,7 +4,7 @@ metadata:
   name: resta-deployment
   namespace: resta
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: resta
