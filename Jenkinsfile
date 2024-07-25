@@ -25,6 +25,21 @@ pipeline {
                 }
             }
         }
+        stage('Stage1') {
+            steps {
+                    script {
+                    def datas = readYaml file: 'deployment.yml'
+                    echo "Got version as ${datas.version} "
+                    }
+                    echo "Deploying to ${params.DEPLOY_ENV} with debug=${params.DEBUG_BUILD}"
+                }
+            }
+        stage('Stage 2') {
+            steps {
+                 sh 'kubectl apply -f deployment.yaml'
+            //sh 'run.sh datas.version'
+        }
+        }
     }
 
     post {
