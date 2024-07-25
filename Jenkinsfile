@@ -1,30 +1,54 @@
 pipeline {
     agent any
-    environment {
-        KUBECONFIG_CREDENTIALS = credentials('k8s-jenkins-token') // ID de las credenciales que creaste en Jenkins
-    }
-    stages {
-        stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([string(credentialsId: 'k8s-jenkins-token', variable: 'TOKEN')]) {
-                    script {
-                        // Configurar el contexto de Kubernetes con el token
-                        sh '''
-                        kubectl config set-credentials jenkins --token=$TOKEN
-                        kubectl config set-context jenkins-context --cluster=minikube --user=jenkins --namespace=resta
-                        kubectl config use-context jenkins-context
-                        '''
 
-                        // Aplicar los archivos YAML desde la carpeta k8s
-                        sh '''
-                        kubectl apply -f k8s/namespace.yaml
-                        kubectl apply -f k8s/deployment.yaml
-                        kubectl apply -f k8s/service.yaml
-                        kubectl apply -f k8s/ingress.yaml
-                        '''
-                    }
+    environment {
+        DOCKER_IMAGE_NAME = 'carlosdelgadillo/resta'
+        DOCKER_IMAGE_TAG = 'latest'
+        KUBECTL_CONFIG = '/home/carlosd/.kube/config' // Ajusta según tu configuración
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    // Construir la imagen Docker
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Autenticarse en Docker Hub y subir la imagen (opcional)
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+                }
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                script {
+                    // Configurar kubectl
+                    sh 'kubectl config use-context minikube'
+                    
+                    // Aplicar los archivos de Kubernetes
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                    sh 'kubectl apply -f ingress.yaml'
                 }
             }
         }
     }
+
+    post {
+        success {
+            echo 'Despliegue exitoso.'
+        }
+        failure {
+            echo 'Despliegue fallido.'
+        }
+    }
 }
+

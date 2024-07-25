@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: resta
-        image: carlosdelgadillo/resta:latest
+        image: carlosdelgadillo/resta:v2
         ports:
         - containerPort: 8004
