@@ -10,7 +10,7 @@ app.post('/restar', (req, res) => {
         return res.status(400).json({ error: 'num1 and num2 must be numbers' });
     }
     const resultado = num1 - num2;
-    res.json({ resultado });
+    res.json(resultado);
 });
 
 const port = 8004;
