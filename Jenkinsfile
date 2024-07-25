@@ -13,15 +13,15 @@ pipeline {
             steps {
                 script {
                     // Configurar kubectl
-                    //sh 'kubectl config use-context minikube'
+                    sh 'kubectl config use-context minikube'
                     
                     // Aplicar el archivo de namespace
-                    //sh 'kubectl apply -f ../resta/k8s/namespace.yaml'
+                    sh 'kubectl apply -f ../resta/k8s/namespace.yaml'
                     
                     // Aplicar los archivos de Kubernetes
-                    sh 'kubectl apply -f https://raw.githubusercontent.com/carlosdelgadillo10/resta/main/k8s/deployment.yaml'
-                    sh 'kubectl apply -f https://raw.githubusercontent.com/carlosdelgadillo10/resta/main/k8s/service.yaml'
-                    sh 'kubectl apply -f https://raw.githubusercontent.com/carlosdelgadillo10/resta/main/k8s/ingress.yaml'
+                    sh 'kubectl apply -f ./resta/k8s/deployment.yaml'
+                    sh 'kubectl apply -f ./resta/k8s/service.yaml'
+                    sh 'kubectl apply -f ./resta/k8s/ingress.yaml'
                 }
             }
         }
