@@ -1,3 +1,6 @@
+node {
+  datas = readYaml file: 'deployment.yml'
+}
 pipeline {
     agent any
 
@@ -9,36 +12,13 @@ pipeline {
 
     stages {
 
-        stage('Deploy to Minikube') {
+        stage('Apply Kubernetes Files') {
             steps {
-                script {
-                    // Configurar kubectl
-                    //sh 'kubectl config use-context minikube'
-                    
-                    // Aplicar el archivo de namespace
-                    //sh 'kubectl apply -f /home/carlosd/Desktop/p_python/microservices/resta/k8s/namespace.yaml'
-                    
-                    // Aplicar los archivos de Kubernetes
-                    sh 'kubectl apply -f deployment.yaml'
-                    //sh 'kubectl apply -f https://raw.githubusercontent.com/carlosdelgadillo10/resta/main/k8s/service.yaml'
-                    //sh 'kubectl apply -f https://raw.githubusercontent.com/carlosdelgadillo10/resta/main/k8s/ingress.yaml'
+                withKubeConfig([credentialsId: 'mykubeconfig']) {
+                //sh 'cat deployment.yaml | sed "s/{{BUILD_NUMBER}}/$BUILD_NUMBER/g" | kubectl apply -f -'
+                sh 'kubectl apply -f deployment.yaml'
                 }
             }
-        }
-        stage('Stage1') {
-            steps {
-                    script {
-                    def datas = readYaml file: 'deployment.yml'
-                    echo "Got version as ${datas.version} "
-                    }
-                    echo "Deploying to ${params.DEPLOY_ENV} with debug=${params.DEBUG_BUILD}"
-                }
-            }
-        stage('Stage 2') {
-            steps {
-                 sh 'kubectl apply -f deployment.yaml'
-            //sh 'run.sh datas.version'
-        }
         }
     }
 
