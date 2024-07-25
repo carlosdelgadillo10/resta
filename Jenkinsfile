@@ -7,26 +7,6 @@ pipeline {
         KUBECTL_CONFIG = '/home/carlosd/.kube/config' // Ajusta según tu configuración
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    // Construir la imagen Docker
-                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    // Autenticarse en Docker Hub y subir la imagen (opcional)
-                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh 'docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
-                }
-            }
-        }
-
         stage('Deploy to Minikube') {
             steps {
                 script {
