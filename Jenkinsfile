@@ -1,6 +1,3 @@
-node {
-  datas = readYaml file: 'deployment.yml'
-}
 pipeline {
     agent any
 
