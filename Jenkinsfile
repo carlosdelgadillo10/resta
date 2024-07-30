@@ -175,20 +175,6 @@ pipeline {
         }
     }
     
-/*    post {
-        failure {
-            emailext (
-                subject: "BUILD FAILED: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
-                body: """
-                    <p><b>El proyecto ${env.JOB_NAME} #${env.BUILD_NUMBER} ha fallado.</b></p>
-                    <p>Ver detalles en: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                    """,
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: "carlos.degadillo102003@gmail.com"
-            )
-        }
-    }
-*/     
 
    
 }
