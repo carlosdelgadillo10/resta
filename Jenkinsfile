@@ -73,7 +73,7 @@ pipeline {
                         docker rm $CONTAINER_ID
                     fi
                     echo "Desplegando nuevo contenedor..."
-                    docker run -d -p 8085:8085 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    docker run -d -p 8004:8004 ${DOCKER_IMAGE}:${DOCKER_TAG}
                     '''
                     //sh "docker.stop ${DOCKER_IMAGE}"
                     //sh "docker.rmi ${DOCKER_IMAGE} -f"
